@@ -1,19 +1,19 @@
 class UserModel {
   final String username;
-  final String profileImage;
-  final String location;
+  final String email;
+  final String profileImageUrl;
 
   UserModel({
     required this.username,
-    required this.profileImage,
-    required this.location,
+    required this.email,
+    required this.profileImageUrl,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      username: json['username'],
-      profileImage: json['profile_image'] ?? '',
-      location: json['location'] ?? '',
+      username: json['username'] ?? 'Unknown',
+      email: json['email'] ?? 'No email',
+      profileImageUrl: json['profile_image'] ?? '',
     );
   }
 }
