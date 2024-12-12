@@ -29,7 +29,7 @@ class DynamicSearchScreenState extends State<DynamicSearchScreen> {
     final searchProvider = Provider.of<SearchProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: const Color.fromRGBO(172, 172, 182, 1),
       appBar: AppBar(
         title: Row(
           children: [

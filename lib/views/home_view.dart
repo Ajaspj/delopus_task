@@ -9,7 +9,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: const Color.fromRGBO(172, 172, 182, 1),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
@@ -116,7 +116,7 @@ class HomeView extends StatelessWidget {
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Colors.grey[300],
+          color: const Color.fromRGBO(217, 217, 217, 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
