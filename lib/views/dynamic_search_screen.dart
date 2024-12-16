@@ -11,6 +11,8 @@ class DynamicSearchScreen extends StatefulWidget {
 
 class DynamicSearchScreenState extends State<DynamicSearchScreen> {
   late TextEditingController searchController;
+  bool _isSearchActive = false;
+  String _lastQuery = "";
 
   @override
   void initState() {
@@ -38,23 +40,17 @@ class DynamicSearchScreenState extends State<DynamicSearchScreen> {
                 controller: searchController,
                 autofocus: true,
                 onChanged: (query) {
-                  if (query.isNotEmpty) {
-                    searchProvider.fetchSuggestions(query);
-                  } else {
-                    searchProvider.clearSuggestions();
-                  }
+                  setState(() {
+                    _isSearchActive = query.isNotEmpty;
+                    _lastQuery = query;
+                  });
+                  searchProvider.fetchSearchResults(query);
                 },
                 decoration: const InputDecoration(
                   hintText: "Search by username...",
                   border: InputBorder.none,
                 ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                searchProvider.fetchSearchResults(searchController.text);
-              },
             ),
           ],
         ),
@@ -64,12 +60,10 @@ class DynamicSearchScreenState extends State<DynamicSearchScreen> {
       body: Builder(
         builder: (context) {
           if (searchProvider.isLoading) {
-            // Show loading indicator
             return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (searchProvider.errorMessage.isNotEmpty) {
-            // Show error message
             return Center(
               child: Text(
                 searchProvider.errorMessage,
@@ -79,8 +73,9 @@ class DynamicSearchScreenState extends State<DynamicSearchScreen> {
                 ),
               ),
             );
-          } else if (searchProvider.searchResults.isNotEmpty) {
-            // Show search results
+          } else if (searchProvider.searchResults.isNotEmpty &&
+              _isSearchActive &&
+              _lastQuery == searchController.text) {
             return ListView.builder(
               itemCount: searchProvider.searchResults.length,
               itemBuilder: (context, index) {
@@ -100,25 +95,7 @@ class DynamicSearchScreenState extends State<DynamicSearchScreen> {
                 );
               },
             );
-          } else if (searchProvider.suggestions.isNotEmpty) {
-            // Show suggestions
-            return ListView.builder(
-              itemCount: searchProvider.suggestions.length,
-              itemBuilder: (context, index) {
-                final user = searchProvider.suggestions[index];
-                return ListTile(
-                  title: Text(user.username),
-                  subtitle: Text(
-                      user.email.isNotEmpty ? user.email : 'Unknown email'),
-                  onTap: () {
-                    searchController.text = user.username;
-                    searchProvider.fetchSearchResults(user.username);
-                  },
-                );
-              },
-            );
-          } else if (searchController.text.isNotEmpty) {
-            // Show no results message
+          } else if (searchController.text.isNotEmpty && !_isSearchActive) {
             return const Center(
               child: Text(
                 "No results found",
@@ -126,7 +103,6 @@ class DynamicSearchScreenState extends State<DynamicSearchScreen> {
               ),
             );
           } else {
-            // Default state when nothing is searched
             return const Center(
               child: Text(
                 "Start typing to search",
